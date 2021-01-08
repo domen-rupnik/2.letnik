@@ -1,0 +1,89 @@
+library(lubridate)
+library(ggplot2)
+source("mojeFunkcije.R")
+setwd('C:/Users/Uporabnik/Documents/Faks/2.letnik/Umetna_inteligenca/Seminarska_naloga/')
+md <- read.table("podatkiSem1.txt", header = T, sep = ",")
+
+#GRAF Povprečje ozona in PM10 delcev glede na mesec
+
+izris_povprecje_ozonaInPM10_mesec1(md)
+
+#Izris grafov
+#
+
+ggplot(md, aes(x = Glob_sevanje_mean, y = O3)) + geom_point() + geom_smooth(method = "lm", se = F) + xlab("Globalno sevanje") + ggtitle("Vpliv globalnega sevanja na ozon")
+ggplot(md, aes(x = Glob_sevanje_mean, y = PM10)) + geom_point() + geom_smooth(method = "lm", se = F)
+
+ggplot(md, aes(x = O3, y = PM10)) + geom_point() + geom_smooth(method = "lm", se = F) + geom_curve()
+ggplot(md, aes(x = PM10, y = O3)) + geom_point() + geom_smooth(method = "lm", se = F)
+
+ggplot(md, aes(x = Temperatura_Krvavec_mean, y = O3)) + geom_point() + geom_smooth(method = "lm", se = F)
+
+
+graf(md$Glob_sevanje_max, md$O3, md$PM10, "Vpliv max globalnega sevanja na O3 in PM10", "Globalno sevanje", "Vrednosti O3 in PM10")
+graf(md$Glob_sevanje_mean, md$O3, md$PM10, "Vpliv povprecnega globalnega sevanja na O3 in PM10", "Globalno sevanje", "Vrednosti O3 in PM10")
+graf(md$Glob_sevanje_min, md$O3, md$PM10, "Vpliv min globalnega sevanja na O3 in PM10", "Globalno sevanje", "Vrednosti O3 in PM10")
+graf(md$Hitrost_vetra_max, md$O3, md$PM10, "Vpliv max hitrosti vetra na O3 in PM10", "Hitrost vetra", "Vrednosti O3 in PM10")
+graf(md$Hitrost_vetra_mean, md$O3, md$PM10, "Vpliv povrecne hitrosti vetra na O3 in PM10", "Hitrost vetra", "Vrednosti O3 in PM10")
+graf(md$Hitrost_vetra_min, md$O3, md$PM10, "Vpliv min hitrosti vetra na O3 in PM10", "Hitrost vetra", "Vrednosti O3 in PM10")
+graf(md$Sunki_vetra_max, md$O3, md$PM10, "Vpliv max sunki vetra na O3 in PM10", "Sunki vetra", "Vrednosti O3 in PM10")
+graf(md$Sunki_vetra_mean, md$O3, md$PM10, "Vpliv povprecje sunki vetra na O3 in PM10", "Sunki vetra", "Vrednosti O3 in PM10")
+graf(md$Sunki_vetra_min, md$O3, md$PM10, "Vpliv min sunki vetra na O3 in PM10", "Sunki vetra", "Vrednosti O3 in PM10")
+graf(md$Padavine_mean, md$O3, md$PM10, "Vpliv povprecje padavin na O3 in PM10", "Padavine", "Vrednosti O3 in PM10")
+graf(md$Padavine_sum, md$O3, md$PM10, "Vpliv sestevka padavin na O3 in PM10", "Padavine", "Vrednosti O3 in PM10")
+graf(md$Pritisk_max, md$O3, md$PM10, "Vpliv max pritiska na O3 in PM10", "Pritisk", "Vrednosti O3 in PM10")
+graf(md$Pritisk_mean, md$O3, md$PM10, "Vpliv povprecnega pritiska na O3 in PM10", "Pritisk", "Vrednosti O3 in PM10")
+graf(md$Pritisk_min, md$O3, md$PM10, "Vpliv min pritiska na O3 in PM10", "Pritisk", "Vrednosti O3 in PM10")
+graf(md$Vlaga_max, md$O3, md$PM10, "Vpliv max vlage na O3 in PM10", "Vlaga", "Vrednosti O3 in PM10")
+graf(md$Temperatura_lokacija_max, md$O3, md$PM10, "Vpliv najvisje temperature na O3 in PM10", "Temperatura", "Vrednosti O3 in PM10")
+graf(md$Temperatura_lokacija_mean, md$O3, md$PM10, "Vpliv povprecne temperature na O3 in PM10", "Temperatura", "Vrednosti O3 in PM10")
+graf(md$Temperatura_Krvavec_max, md$O3, md$PM10, "Vpliv najvisje temperature na O3 in PM10", "Temperatura", "Vrednosti O3 in PM10")
+graf(md$Temperatura_Krvavec_mean, md$O3, md$PM10, "Vpliv povprecne temperature na O3 in PM10", "Temperatura", "Vrednosti O3 in PM10")
+graf(md$Temperatura_Krvavec_min, md$O3, md$PM10, "Vpliv najnizje temperature na O3 in PM10", "Temperatura", "Vrednosti O3 in PM10")
+
+
+
+
+#Faktoriziranje meseca
+md$Mesec <- month(md$Datum)
+md$Mesec<-factor(month(md$Datum))
+
+
+
+
+
+# Mere za ocenjevanje atributov so implementirane v paketu "CORElearn"
+
+# Nalozimo knjiznico
+#install.packages("CORElearn") 
+library(CORElearn)
+md$Mesec<-factor(month(md$Datum))
+
+md$Leto <- factor(year(md$Datum))
+md$PM10 <- NULL
+
+sort(attrEval(O3 ~ ., md, "InfGain"), decreasing = TRUE)
+
+# Odlocitveno drevo z uporabo informacijskega prispevka
+dt <- CoreModel(O3 ~ ., md, model="tree", selectionEstimator="InfGain")
+plot(dt, md)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

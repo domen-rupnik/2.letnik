@@ -1,0 +1,215 @@
+#KLASIFIKACIJSKI MODELI
+#Uporabljali bomo funkcije iz naslednjih knjiznic: ipred, prodlim, rpart, CORElearn, e1071, randomForest, kernlab, in nnet
+source("funkcije.R")
+install.packages(c("ipred", "prodlim", "CORElearn", "e1071", "randomForest", "kernlab", "nnet"))
+library(pROC)
+library(lubridate)
+
+#Pripravimo podatke, diskretizacija
+md <- read.table(file="podatkiSem1.txt", sep=",", header=TRUE)
+md$PM10 <- cut(md$PM10, breaks=c(min(md$PM10), 35.0, max(md$PM10)), labels=c("NIZKA", "VISOKA"), include.lowest = TRUE)
+md$O3 <- cut(md$O3, breaks=c(min(md$O3), 60.0, 120.0, 180.0, max(md$O3)), labels=c("NIZKA", "SREDNJA", "VISOKA", "EKSTREMNA"), include.lowest = TRUE)
+
+#md$Mesec<-factor(month(md$Datum))
+
+#md$Leto <- factor(year(md$Datum))
+
+#Za O3
+#Razdelimo na ucno in testno, 70:30
+set.seed(12345)
+sel <- sample(1:nrow(md), size=as.integer(nrow(md) * 0.7), replace=F)
+
+learn <- md[sel,]
+test <- md[-sel,]
+
+learn$Datum <- NULL
+learn$PM10 <- NULL
+
+test$Datum <- NULL
+test$PM10 <- NULL
+
+
+
+observed <- test$O3
+obsMat <- model.matrix(~O3-1, test)
+
+#Metoda precnega preverjanja je implementirana v knjiznici "ipred"
+library(ipred)
+
+#Pomozne funkcije, ki jih potrebujemo za izvedbo precnega preverjanja
+mypredict.generic <- function(object, newdata){predict(object, newdata, type = "class")}
+mymodel.coremodel <- function(formula, data, target.model){CoreModel(formula, data, model=target.model)}
+mypredict.coremodel <- function(object, newdata) {pred <- predict(object, newdata)$class; destroyModels(object); pred}
+
+#ODLOCITVENO DREVO
+#Gradnja modela s pomocjo knjiznice "rpart"
+library(rpart)
+dt <- rpart(O3 ~ ., data = learn)
+plot(dt);text(dt)
+predicted <- predict(dt, test, type="class")
+CA(observed, predicted)
+
+predMat <- predict(dt, test, type = "prob")
+brier.score(obsMat, predMat)
+
+errorest(O3~., data=learn, model = rpart, predict = mypredict.generic)
+
+#Gradnja modela s pomocjo knjiznice "CORElearn"
+#Napise da Glob_sevanje_min ima vse values enake in je skippan, zato ga lahko odstranimo?
+#learn$Glob_sevanje_min <- NULL 
+library(CORElearn)
+cm.dt <- CoreModel(O3 ~ ., data = learn, model="tree")
+plot(cm.dt, learn)
+predicted <- predict(cm.dt, test, type="class")
+CA(observed, predicted)
+
+predMat <- predict(cm.dt, test, type = "probability")
+brier.score(obsMat, predMat)
+
+errorest(O3~., data=learn, model = mymodel.coremodel, predict = mypredict.coremodel, target.model="tree")
+
+#NAIVNI BAYESOV KLASIFIKATOR
+#Gradnja modela s pomocjo knjiznice "e1071"
+library(e1071)
+nb <- naiveBayes(O3 ~ ., data = learn)
+predicted <- predict(nb, test, type="class")
+CA(observed, predicted)
+
+predMat <- predict(nb, test, type = "raw")
+brier.score(obsMat, predMat)
+
+errorest(O3~., data=learn, model = naiveBayes, predict = mypredict.generic)
+
+#Gradnja modela s pomocjo knjiznice "CORElearn"
+#Napise da Glob_sevanje_min ima vse values enake in je skippan, zato ga lahko odstranimo?
+#learn$Glob_sevanje_min <- NULL
+library(CORElearn)
+cm.nb <- CoreModel(O3 ~ ., data = learn, model="bayes")
+predicted <- predict(cm.nb, test, type="class")
+CA(observed, predicted)
+
+predMat <- predict(cm.nb, test, type = "probability")
+brier.score(obsMat, predMat)
+
+errorest(O3~., data=learn, model = mymodel.coremodel, predict = mypredict.coremodel, target.model="bayes")
+
+#K-NAJBLIZJIH SOSEDOV
+#Gradnja modela s pomocjo knjiznice "CORElearn"
+#Napise da Glob_sevanje_min ima vse values enake in je skippan, zato ga lahko odstranimo?
+#learn$Glob_sevanje_min <- NULL
+library(CORElearn)
+cm.knn <- CoreModel(O3 ~ ., data = learn, model="knn", kInNN = 10)
+predicted <- predict(cm.knn, test, type="class")
+CA(observed, predicted)
+
+predMat <- predict(cm.knn, test, type = "probability")
+brier.score(obsMat, predMat)
+
+errorest(O3~., data=learn, model = mymodel.coremodel, predict = mypredict.coremodel, target.model="knn")
+
+#NAKLJUCNI GOZD
+#Gradnja modela s pomocjo knjiznice "randomForest"
+library(randomForest)
+rf <- randomForest(O3 ~ ., data = learn)
+predicted <- predict(rf, test, type="class")
+CA(observed, predicted)
+
+predMat <- predict(rf, test, type = "prob")
+brier.score(obsMat, predMat)
+
+mypredict.rf <- function(object, newdata){predict(object, newdata, type = "class")}
+errorest(O3~., data=learn, model = randomForest, predict = mypredict.generic)
+
+#Gradnja modela s pomocjo knjiznice "CORElearn"
+#Napise da Glob_sevanje_min ima vse values enake in je skippan, zato ga lahko odstranimo?
+#learn$Glob_sevanje_min <- NULL
+library(CORElearn)
+cm.rf <- CoreModel(O3 ~ ., data = learn, model="rf")
+predicted <- predict(cm.rf, test, type="class")
+CA(observed, predicted)
+
+predMat <- predict(cm.rf, test, type = "probability")
+brier.score(obsMat, predMat)
+
+errorest(O3~., data=learn, model = mymodel.coremodel, predict = mypredict.coremodel, target.model="rf")
+
+#SVM
+#Gradnja modela s pomocjo knjiznice "e1071"
+#Napise da Glob_sevanje_min ima vse values enake in je skippan, zato ga lahko odstranimo?
+#learn$Glob_sevanje_min <- NULL
+library(e1071)
+sm <- svm(O3 ~ ., data = learn)
+predicted <- predict(sm, test, type="class")
+CA(observed, predicted)
+
+sm <- svm(O3 ~ ., learn, probability = T)
+pred <- predict(sm, test, probability = T)
+predMat <- attr(pred, "probabilities")
+
+#V tem konkretnem primeru, vrstni red razredov (stolpcev) v matriki predMat je obraten kot v matriki obsMat. 
+colnames(obsMat)
+colnames(predMat)
+
+# Iz tega razloga zamenjemo vrstni red stolpcev v matriki predMat
+brier.score(obsMat, predMat[,c(2,1)])
+
+errorest(O3~., data=learn, model = svm, predict = mypredict.generic)
+
+#Gradnja modela s pomocjo knjiznice "kernlab"
+library(kernlab)
+model.svm <- ksvm(O3 ~ ., data = learn, kernel = "rbfdot")
+predicted <- predict(model.svm, test, type = "response")
+CA(observed, predicted)
+
+model.svm <- ksvm(O3 ~ ., data = learn, kernel = "rbfdot", prob.model = T)
+predMat <- predict(model.svm, test, type = "prob")
+brier.score(obsMat, predMat)
+
+mypredict.ksvm <- function(object, newdata){predict(object, newdata, type = "response")}
+errorest(O3~., data=learn, model = ksvm, predict = mypredict.ksvm)
+
+#UMETNE NEVRONSKE MREZE
+#Gradnja modela s pomocjo knjiznice "nnet"
+library(nnet)
+#Implementacija funkcije za ucenje nevronske mreze daje boljse rezultate v primeru, ko so ucni primeri normalizirani. 
+
+#Poiscemo zalogo vrednosti zveznih atributov
+# (v nasem primeru so vsi atributi zvezni, razen ciljne spr. "Class", ki je 58. stolpec)
+max_learn <- apply(learn[,-c(1, 4, 25)], 2, max)
+min_learn <- apply(learn[,-c(1, 4, 25)], 2, min)
+
+#Skaliramo podatke
+learn_scaled <- scale(learn[,-c(1, 4, 25)], center = min_learn, scale = max_learn - min_learn)
+learn_scaled <- data.frame(learn_scaled)
+learn_scaled$O3 <- learn$O3
+learn_scaled$Postaja <- learn$Postaja
+learn_scaled$Glob_sevanje_min <- NULL
+
+#Vse vrednosti atributov v ucni mnozici so na intervalu [0,1]
+summary(learn_scaled)
+
+#Testno mnozico skaliramo na zalogo vrednosti iz ucne mnozice!
+test_scaled <- scale(test[,-c(1, 4, 25)], center = min_learn, scale = max_learn - min_learn)
+test_scaled <- data.frame(test_scaled)
+test_scaled$O3 <- test$O3
+test_scaled$Postaja <- test$Postaja
+test_scaled$Glob_sevanje_min <- NULL
+
+
+# v testni mnozici ne bodo vse vrednosti na intervalu [0,1]!
+summary(test_scaled)
+
+
+nn <- nnet(O3 ~ ., data = learn_scaled, size = 5, decay = 0.0001, maxit = 10000)
+predicted <- predict(nn, test_scaled, type = "class")
+CA(observed, predicted)
+
+# v primeru binarne klasifikacije bo funkcija predict vrnila verjetnosti samo enega razreda.
+# celotno matriko moramo rekonstruirati sami
+
+pm <- predict(nn, test_scaled, type = "raw")
+predMat <- cbind(1-pm, pm)
+brier.score(obsMat, predMat)
+
+mypredict.nnet <- function(object, newdata){as.factor(predict(object, newdata, type = "class"))}
+errorest(O3~., data=learn_scaled, model = nnet, predict = mypredict.nnet, size = 5, decay = 0.0001, maxit = 10000)

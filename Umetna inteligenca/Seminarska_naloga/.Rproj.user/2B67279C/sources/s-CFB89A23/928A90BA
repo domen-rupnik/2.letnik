@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1575204617724.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "928A90BA",
+    "lastKnownWriteTime" : 1575197178,
+    "last_content_update" : 1575197178,
+    "path" : "~/Faks/2.letnik/Umetna_inteligenca/Seminarska_naloga/funkcije.R",
+    "project_path" : "funkcije.R",
+    "properties" : {
+        "cursorPosition" : "16,19",
+        "scrollLine" : "2"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

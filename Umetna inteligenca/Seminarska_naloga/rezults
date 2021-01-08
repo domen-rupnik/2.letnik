@@ -1,0 +1,77 @@
+O3 klasifikacija s podmnozico (dodani Predviden_O3, Predviden_PM10 in Meseci)
+----------------------------------------
+          CA     Brier      Klasifikator
+1  0.7580645 0.3547265 Odlocitveno drevo
+2  0.7768817 0.3334593  CORE LEARN drevo
+3  0.6962366 0.5614824             Bayes
+4  0.5833333 0.6772447        CORE bayes
+5  0.7930108 0.2943817               KNN
+6  0.8225806 0.2634243    Nakljucni gozd
+7  0.8185484 0.2612073        CORE MODEL
+8  0.5846774     /                 E1071
+9  0.8037634 0.3173121          KERN LAB
+
+O3 klasifikacija 
+----------------
+          CA     Brier      Klasifikator
+1  0.7419355 0.3932342 Odlocitveno drevo
+2  0.7526882 0.3742560  CORE LEARN drevo
+3  0.6814516 0.5855281             Bayes
+4  0.5551075 0.7061629        CORE bayes
+5  0.7795699 0.3129032               KNN
+6  0.8198925 0.2835238    Nakljucni gozd
+7  0.8077957 0.2868283        CORE MODEL
+8  0.5940860     /                 E1071
+9  0.7956989 0.3435459          KERN LAB
+
+PM10 klasifikacija
+-------------------------------
+1  0.8951613 0.1811081 Odlocitveno drevo
+2  0.8991935 0.1753315  CORE LEARN drevo
+3  0.6881720 0.5706214             Bayes
+4  0.7970430 0.3735407        CORE bayes
+5  0.9072581 0.1480914               KNN
+6  0.9072581 0.1384017    Nakljucni gozd
+7  0.9112903 0.1395336        CORE MODEL
+8  0.8655914     /                 E1071
+9  0.8965054 0.1604689          KERN LAB
+
+PM10 klasifikacija s podmnozico (dodani Predviden_O3, Predviden_PM10 in Meseci)
+-------------------------------
+1  0.8884409 0.1720314 Odlocitveno drevo
+2  0.8884409 0.1808558  CORE LEARN drevo
+3  0.7123656 0.5188451             Bayes
+4  0.8131720 0.3361406        CORE bayes
+5  0.9099462 0.1453763               KNN
+6  0.9166667 0.1264705    Nakljucni gozd
+7  0.9193548 0.1251893        CORE MODEL
+8  0.8655914     /                 E1071
+9  0.9032258 0.1507040          KERN LAB
+
+
+
+Ocenjevanje atributov za O3
+---------------------------
+"Glob_sevanje_mean"         "Glob_sevanje_max"          "Vlaga_min"                
+"Vlaga_mean"                "Vlaga_max"                 "Sunki_vetra_max"          
+"Temperatura_Krvavec_max"   "Temperatura_lokacija_min"  "Temperatura_Krvavec_min"  
+"Temperatura_Krvavec_mean"  "Temperatura_lokacija_max"  "Temperatura_lokacija_mean"
+
+Ocenjevanje atributov z dodanimi atributi za O3 (dodani Predviden_O3, Predviden_PM10 in Meseci)
+-----------------------------------------------
+"Mesec"                     "Predviden_O3"              "Glob_sevanje_mean"        
+"Vlaga_min"                 "Glob_sevanje_max"          "Vlaga_mean"               
+"Temperatura_Krvavec_max"   "Vlaga_max"                 "Temperatura_lokacija_min" 
+"Temperatura_lokacija_max"  "Sunki_vetra_max"           "Temperatura_Krvavec_min"  
+"Temperatura_lokacija_mean" "Temperatura_Krvavec_mean"
+
+Ocenjevanje atributov z dodatnimi atributi za PM10 (dodani Predviden_O3, Predviden_PM10 in Meseci)
+--------------------------------------------------
+"Predviden_PM10"            "Mesec"                     "Temperatura_lokacija_max" 
+"Temperatura_lokacija_mean" "Temperatura_lokacija_min"
+
+Ocenjevanje atributov za PM10
+-----------------------------
+"Glob_sevanje_max"          "Glob_sevanje_mean"         "Temperatura_lokacija_max" 
+"Temperatura_lokacija_mean" "Temperatura_lokacija_min"  "Sunki_vetra_max"          
+"Hitrost_vetra_mean"        "Sunki_vetra_mean"          "Hitrost_vetra_max"

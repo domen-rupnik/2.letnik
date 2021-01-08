@@ -1,0 +1,19 @@
+1. Vidnost statusa sistema:
+	Vidnost statusa sistema sem uključil na dnu uporabniškega umesnika. Status sistema uporabniku sporoča o morebitnih napakah.
+2. Povezava med sistemom in resničnim svetom
+	Uporabil sem uporabnikov materinski jezik. Uporabniški sistem je uporabniku prijazen.
+3. Uporabniški nadzor in svoboda
+	Umesnik omogoča popravke pri vnosu.
+4. Doslednost in stadardi
+	Funkcionalnost uporabniškega umesnika ni dvoumna. Uporabnik naj bi razumel, kaj ureja in vpisuje.
+5. Preprečevanje napak
+	Sistem omogoča preverjanje možnih napak pri vpisu podatkov.
+6. 
+7. Prilagodljivost in učinkovitost uporabe
+8. Estetika in milimalistično oblikovanje
+	Umesnik ne vsebuje funkcij in oblik, katerih ne potrebuje.
+9. Pomoč uporabnikov prepoznavanti, diagnosticirati in popraviti napake
+	Vse napake se izpišejo v statusu sistema. Polja, ki niso vnešena, se obarvajo rdeče.
+
+	
+	
